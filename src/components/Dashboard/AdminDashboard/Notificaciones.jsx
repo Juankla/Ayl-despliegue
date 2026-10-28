@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_ROOT } from '../../../config/api';
 
 // Paleta corporativa: Negro Principal y Amarillo de Contraste
 const COLORS = {
@@ -15,7 +16,7 @@ export default function NotificacionesView() {
   const [filtro, setFiltro] = useState('todas');
   const [cargando, setCargando] = useState(true);
 
-  const API_URL = "http://localhost:3001/api/notificaciones";
+  const API_URL = `${API_ROOT}/notificaciones`;
 
   // Función para optimizar las URLs de Cloudinary en las miniaturas
   const optimizarImagenCloudinary = (url) => {

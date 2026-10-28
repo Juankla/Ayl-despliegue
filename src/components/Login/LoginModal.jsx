@@ -1,6 +1,7 @@
 // src/components/Login/LoginModal.jsx (COMPLETO CORREGIDO)
 import { useState } from "react";
 import Swal from "sweetalert2";
+import { API_ROOT } from "../../config/api";
 import { supabase } from "../../lib/client";
 import RecoverPasswordModal from "./RecoverPasswordModal";
 
@@ -15,9 +16,7 @@ function LoginModal({ onClose, login, setVista }) {
   const [showRecoverPassword, setShowRecoverPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ✅ URL DINÁMICA desde variables de entorno
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-  const API_AUTH_URL = `${API_BASE}/usuario`;
+  const API_AUTH_URL = `${API_ROOT}/usuarios`;
 
   const handleGoogleLogin = async () => {
     try {

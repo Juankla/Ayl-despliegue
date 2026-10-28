@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Home/Navbar";
 import Footer from "../components/Home/Footer";
 import SkeletonLoader from "../components/UI/SkeletonLoader";
+import { API_ROOT } from "../config/api";
 
 // Función auxiliar limpia para parsear precios de forma segura (Definida arriba para evitar hoisting)
 function inputPrecioFormato(valor) {
@@ -21,7 +22,7 @@ function Catalogoview({ setVista, setProductoSeleccionadoId, agregarAlCarrito })
     async function cargarProductos() {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:3001/productos");
+        const response = await fetch(`${API_ROOT}/productos`);
         if (!response.ok) throw new Error(`Error ${response.status}`);
         const data = await response.json();
         setProductos(Array.isArray(data) ? data : []);

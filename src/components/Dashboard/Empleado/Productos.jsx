@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 import Notificaciones from "./Notificaciones";
+import { API_ROOT } from "../../../config/api";
 
-const API_URL = "http://localhost:3001/api/productos";
+const API_URL = `${API_ROOT}/productos`;
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/duvoqozcl/image/upload";
 const UPLOAD_PRESET = "AYL_Compresores";
 

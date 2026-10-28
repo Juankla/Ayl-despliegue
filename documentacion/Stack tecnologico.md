@@ -38,7 +38,7 @@ Las páginas y componentes están organizados bajo `src/Pages` y `src/components
 
 El punto de entrada es `backend/server.js`. Monta las rutas bajo `/api` y separa la implementación por dominio en `backend/routes` y `backend/controllers`: autenticación, usuarios, productos, bodegas, órdenes, reseñas, carrito, reportes, bitácora y notificaciones.
 
-El frontend consume el backend mediante `src/lib/api.js`, que encapsula solicitudes HTTP y el manejo del token personalizado. La URL base se configura con `VITE_API_URL`; si no está definida, se usa `http://localhost:3001/api`.
+El frontend consume el backend mediante `src/lib/api.js` y la configuración centralizada de `src/config/api.js`. `VITE_API_URL` define el origen del backend (sin el sufijo `/api`); si no está definida, las peticiones usan rutas relativas `/api`, compatibles con los rewrites de Vercel. Para desarrollo local, configura `VITE_API_URL=http://localhost:3001` en un archivo `.env.local` que no se publique.
 
 ## Base de datos y autenticación
 

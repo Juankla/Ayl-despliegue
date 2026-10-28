@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_ROOT } from "../../../config/api";
 
 function DashboardHome() {
   const [productos, setProductos] = useState([]);
@@ -13,7 +14,7 @@ function DashboardHome() {
   const obtenerProductos = async () => {
     setCargando(true);
     try {
-      const respuesta = await fetch("http://localhost:3001/api/productos"); 
+      const respuesta = await fetch(`${API_ROOT}/productos`);
       if (!respuesta.ok) throw new Error(`Error en la petición: ${respuesta.status}`);
       const data = await respuesta.json();
       setProductos(Array.isArray(data) ? data : []);
@@ -40,7 +41,7 @@ function DashboardHome() {
     setMensajeRespaldo(null);
 
     try {
-      const respuesta = await fetch("http://localhost:3001/api/backup/generar-respaldo-drive", {
+      const respuesta = await fetch(`${API_ROOT}/backup/generar-respaldo-drive`, {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       });

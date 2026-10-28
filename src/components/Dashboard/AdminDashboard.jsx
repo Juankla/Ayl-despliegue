@@ -6,6 +6,7 @@ import Notificaciones from "./AdminDashboard/Notificaciones";
 import Reportes from "./AdminDashboard/Reportes";
 import Usuarios from "./AdminDashboard/Usuarios";
 import Bitacora from "./AdminDashboard/Bitacora";
+import { API_ROOT } from "../../config/api";
 
 const logoMarca = "https://res.cloudinary.com/duvoqozcl/image/upload/v1777394217/logo-ayl.png";
 
@@ -21,8 +22,8 @@ function SeccionVacia({ nombre }) {
   );
 }
 
-const API_URL = "http://localhost:3001/api/productos";
-const NOTIFICACIONES_API_URL = "http://localhost:3001/api/notificaciones/conteo";
+const API_URL = `${API_ROOT}/productos`;
+const NOTIFICACIONES_API_URL = `${API_ROOT}/notificaciones/conteo`;
 
 function AdminDashboard({ logout }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);

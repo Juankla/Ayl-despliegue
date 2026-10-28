@@ -3,8 +3,9 @@ import Swal from "sweetalert2";
 import Header from "./Header.productos";
 import Filtros from "./Filtros.productos";
 import ProductoCard from "./Tarjeta.producto";
+import { API_ROOT } from "../../../config/api";
 
-const API_URL = "http://localhost:3001/api/productos";
+const API_URL = `${API_ROOT}/productos`;
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/duvoqozcl/image/upload";
 const UPLOAD_PRESET = "AYL_Compresores";
 

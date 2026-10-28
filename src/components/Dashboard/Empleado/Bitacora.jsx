@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { API_ROOT } from '../../../config/api';
 
 export default function Bitacora() {
   const [bitacora, setBitacora] = useState([]);
@@ -11,7 +12,7 @@ export default function Bitacora() {
     setCargando(true);
     setError(null);
     try {
-      const res = await fetch('http://localhost:3001/api/bitacora');
+      const res = await fetch(`${API_ROOT}/bitacora`);
       if (!res.ok) throw new Error(`Error ${res.status}`);
       const data = await res.json();
       setBitacora(Array.isArray(data) ? data : []);

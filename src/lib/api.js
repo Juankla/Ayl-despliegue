@@ -1,7 +1,8 @@
 // src/lib/api.js
 import { supabase } from './client';
+import { API_ROOT } from '../config/api';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE = API_ROOT;
 
 // Función para decodificar y validar token JWT
 const isValidToken = (token) => {
