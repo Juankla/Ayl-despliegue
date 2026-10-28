@@ -6,6 +6,10 @@ function DashboardHome() {
   const [filtroMetrico, setFiltroMetrico] = useState("todos"); // "todos", "activos", "critico"
   const [busqueda, setBusqueda] = useState("");
 
+  // ── ESTADOS PARA EL RESPALDO EN DRIVE ──
+  const [respaldando, setRespaldando] = useState(false);
+  const [mensajeRespaldo, setMensajeRespaldo] = useState(null);
+
   const obtenerProductos = async () => {
     setCargando(true);
     try {
@@ -25,6 +29,47 @@ function DashboardHome() {
     obtenerProductos();
   }, []);
 
+  // ── FUNCIÓN DE RESPALDO A GOOGLE DRIVE ──
+  const ejecutarRespaldoDrive = async () => {
+    const confirmar = window.confirm(
+      "¿Deseas generar y enviar una copia de seguridad completa a Google Drive?"
+    );
+    if (!confirmar) return;
+
+    setRespaldando(true);
+    setMensajeRespaldo(null);
+
+    try {
+      const respuesta = await fetch("http://localhost:3001/api/backup/generar-respaldo-drive", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const data = await respuesta.json();
+
+      if (data.success) {
+        setMensajeRespaldo({
+          tipo: "success",
+          texto: `¡Respaldo guardado exitosamente en Drive! (${data.fileName})`
+        });
+      } else {
+        setMensajeRespaldo({
+          tipo: "danger",
+          texto: `Error al respaldar: ${data.message || data.error}`
+        });
+      }
+    } catch (error) {
+      console.error("Error en la llamada de respaldo:", error);
+      setMensajeRespaldo({
+        tipo: "danger",
+        texto: "No se pudo conectar con el servidor para generar el respaldo."
+      });
+    } finally {
+      setRespaldando(false);
+      setTimeout(() => setMensajeRespaldo(null), 6000);
+    }
+  };
+
   // ── CÁLCULO DE MÉTRICAS GLOBALES (Sobre todo el inventario real) ──
   const totalProductos = productos.length;
   
@@ -43,13 +88,12 @@ function DashboardHome() {
   // ── PROCESAMIENTO: ORDENAR POR ÚLTIMOS AGREGADOS Y LIMITAR A 10 ──
   const ultimosProductos = [...productos]
     .sort((a, b) => {
-      // Intenta ordenar por fecha de creación, si no existe usa el ID descendente
       if (a.created_at && b.created_at) {
         return new Date(b.created_at) - new Date(a.created_at);
       }
       return b.id - a.id; 
     })
-    .slice(0, 10); // <--- Aquí garantizamos que nunca pasen más de 10 al render
+    .slice(0, 10);
 
   // ── FILTRADO OPERATIVO SOBRE LOS 10 SELECCIONADOS ──
   const productosFiltrados = ultimosProductos.filter(p => {
@@ -151,15 +195,62 @@ function DashboardHome() {
           <span className="text-muted small">Últimas novedades del inventario y estado global</span>
         </div>
 
-        <button 
-          className="btn btn-sm btn-dark d-flex align-items-center gap-2 px-3 py-2 fw-semibold" 
-          style={{ backgroundColor: "#121212", borderColor: "#121212" }}
-          onClick={obtenerProductos}
-        >
-          <i className="bi bi-arrow-clockwise"></i>
-          Sincronizar
-        </button>
+        <div className="d-flex align-items-center gap-2">
+          {/* BOTÓN RESPALDO EN DRIVE */}
+          <button 
+            className="btn btn-sm d-flex align-items-center gap-2 px-3 py-2 fw-semibold"
+            style={{ 
+              backgroundColor: respaldando ? "#e2e8f0" : "#ffffff", 
+              borderColor: "#cbd5e1",
+              color: "#121212"
+            }}
+            onClick={ejecutarRespaldoDrive}
+            disabled={respaldando}
+            title="Generar y subir copia a Google Drive"
+          >
+            {respaldando ? (
+              <>
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span>Respaldando...</span>
+              </>
+            ) : (
+              <>
+                <i className="bi bi-cloud-arrow-up text-primary"></i>
+                <span>Respaldar en Drive</span>
+              </>
+            )}
+          </button>
+
+          {/* BOTÓN SINCRONIZAR */}
+          <button 
+            className="btn btn-sm btn-dark d-flex align-items-center gap-2 px-3 py-2 fw-semibold" 
+            style={{ backgroundColor: "#121212", borderColor: "#121212" }}
+            onClick={obtenerProductos}
+          >
+            <i className="bi bi-arrow-clockwise"></i>
+            Sincronizar
+          </button>
+        </div>
       </div>
+
+      {/* MENSAJE DE CONFIRMACIÓN O ERROR DEL RESPALDO */}
+      {mensajeRespaldo && (
+        <div 
+          className={`alert alert-${mensajeRespaldo.tipo} d-flex align-items-center justify-content-between py-2 px-3 mb-4 rounded-3 shadow-sm`}
+          style={{ fontSize: "0.875rem" }}
+        >
+          <div className="d-flex align-items-center gap-2">
+            <i className={`bi ${mensajeRespaldo.tipo === "success" ? "bi-check-circle-fill" : "bi-exclamation-octagon-fill"}`}></i>
+            <span>{mensajeRespaldo.texto}</span>
+          </div>
+          <button 
+            type="button" 
+            className="btn-close" 
+            style={{ fontSize: "0.75rem" }}
+            onClick={() => setMensajeRespaldo(null)}
+          ></button>
+        </div>
+      )}
 
       {cargando ? (
         <div className="text-center py-5">
